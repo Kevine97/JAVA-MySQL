@@ -5,19 +5,22 @@ import java.awt.Font;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public class Registro extends javax.swing.JDialog {
-
+    
     int x;
     int y;
-
+    
     public Registro(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-
+        
         initComponents();
         setBackground(new Color(0, 0, 0, 0));
-
+        
         tbRegistro.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         tbRegistro.getTableHeader().setOpaque(false);
         tbRegistro.getTableHeader().setBackground(new Color(204, 14, 116));
@@ -25,17 +28,17 @@ public class Registro extends javax.swing.JDialog {
         tbRegistro.setRowHeight(25);
         cargarTabla();
     }
-
+    
     public void cargarTabla() {
         DefaultTableModel modelotabla = new DefaultTableModel();
         tbRegistro.setModel(modelotabla);
         PreparedStatement ps = null;
         ResultSet rs = null;
-
+        
         try {
             Conexion c = new Conexion();
             Connection conexion = c.getConnection();
-
+            
             ps = conexion.prepareStatement("select clave,nombre,domicilio,celular,correo,fecha,genero from persona");
             rs = ps.executeQuery();
             modelotabla.addColumn("Clave");
@@ -45,7 +48,7 @@ public class Registro extends javax.swing.JDialog {
             modelotabla.addColumn("Correo");
             modelotabla.addColumn("Fecha");
             modelotabla.addColumn("Genero");
-
+            
             while (rs.next()) {
                 Object fila[] = new Object[7];
                 for (int i = 0; i < fila.length; i++) {
@@ -53,7 +56,7 @@ public class Registro extends javax.swing.JDialog {
                 }
                 modelotabla.addRow(fila);
             }
-
+            
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -74,6 +77,9 @@ public class Registro extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        txtbuscar = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -128,7 +134,7 @@ public class Registro extends javax.swing.JDialog {
         tbRegistro.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tbRegistro);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 760, 210));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 760, 210));
 
         jPanel2.setBackground(new java.awt.Color(57, 62, 70));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -137,7 +143,7 @@ public class Registro extends javax.swing.JDialog {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("USUARIOS REGISTRADOS");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(-1, 42, 780, 30));
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 780, 30));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_close_window_25px.png"))); // NOI18N
@@ -153,11 +159,31 @@ public class Registro extends javax.swing.JDialog {
         });
         jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 0, 50, 30));
 
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 780, 100));
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 780, 80));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 780, 370));
+        txtbuscar.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        txtbuscar.setBorder(null);
+        txtbuscar.setOpaque(false);
+        txtbuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtbuscarActionPerformed(evt);
+            }
+        });
+        txtbuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtbuscarKeyReleased(evt);
+            }
+        });
+        jPanel1.add(txtbuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 110, 270, 30));
 
-        setSize(new java.awt.Dimension(778, 370));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_search_35px_2.png"))); // NOI18N
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 110, 40, 30));
+        jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 140, 310, 10));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 780, 420));
+
+        setSize(new java.awt.Dimension(778, 411));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -183,6 +209,25 @@ public class Registro extends javax.swing.JDialog {
         x = evt.getX();
         y = evt.getY();
     }//GEN-LAST:event_jPanel1MousePressed
+
+    private void txtbuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtbuscarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtbuscarActionPerformed
+    
+    public void filtarTabla(String criterio) {
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tbRegistro.getModel());
+        tbRegistro.setRowSorter(sorter);
+        if (criterio.trim().length() == 0) {
+            sorter.setRowFilter(null);
+        } else {
+            sorter.setRowFilter(RowFilter.regexFilter(criterio, 0,1));
+        }
+    }
+
+    private void txtbuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtbuscarKeyReleased
+        // TODO add your handling code here:
+        filtarTabla(txtbuscar.getText());
+    }//GEN-LAST:event_txtbuscarKeyReleased
 
     /**
      * @param args the command line arguments
@@ -229,10 +274,13 @@ public class Registro extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable tbRegistro;
+    private javax.swing.JTextField txtbuscar;
     // End of variables declaration//GEN-END:variables
 
 }
